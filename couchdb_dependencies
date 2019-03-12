@@ -1,0 +1,24 @@
+---
+ - hosts: all
+   become: true
+   sudo: true
+   tasks:
+   - name: Install add-apt-repostory
+     become: yes
+     apt: name=echo "echo "deb https://apache.bintray.com/couchdb-deb xenial main" \ | sudo tee -a /etc/apt/sources.list
+     state=latest
+    
+   - apt_repository:
+        repo: curl -L https://couchdb.apache.org/repo/bintray-pubkey.asc \ | sudo apt-key add -
+        state: present
+   - name: ensure couchdb is at the latest version
+     apt: couchdb
+     apt: name={{item}} state=latest
+     with_items:
+      - no-install-recommends -y install 
+      - build-essential
+      - pkg-config
+      - erlang 
+      - libicu-dev 
+      - libmozjs185-dev
+      - libcurl4-openssl-dev
